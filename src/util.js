@@ -3,7 +3,7 @@ const fs = require('fs');
 const stat = fs.stat;
 
 module.exports = {
-    __root__: process.cwd(),
+    __root__: process.cwd(),   // 代码执行时的目录
     // 复制文件夹到指定目录下
     copyFile: function (src, dst) {
         // 读取目录中的所有文件/目录
