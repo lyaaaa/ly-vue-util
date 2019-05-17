@@ -8,7 +8,7 @@ const { __root__, existsFile, copyFile } = require('./util');
 
 commander.version('0.0.1')
          .description('init extension project')
-
+         
 inquirer
   .prompt([
     {
