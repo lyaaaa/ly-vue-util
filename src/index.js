@@ -3,7 +3,8 @@
 const commander = require('commander');
 const inquirer = require('inquirer');
 const shell = require('shelljs');
-const util = require('./util');
+const path = require('path');
+const { __root__, existsFile, copyFile } = require('./util');
 
 commander.version('0.0.1')
          .description('init extension project')
@@ -21,6 +22,9 @@ inquirer
     // 是否需要vuex;
     if(answers.vuex){
       shell.exec('npm install vuex --save');
-      util.makeStore();
+      var url = path.join(__root__, '/src/store');
+      var src = path.join(__root__, '/template/store');
+      // 将vuex中的store模板直接拷贝到src下面
+      existsFile(src, url, copyFile);
     }
   });

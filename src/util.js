@@ -1,57 +1,48 @@
 const path = require('path');
 const fs = require('fs');
-const __root__ = process.cwd()
+const stat = fs.stat;
 
 module.exports = {
-    makeStore: function () {
-        var url = path.join(__root__, '/src/store');
-var VUEXJS = [{
-        name: '/actions.js',
-        content: ''
-    },
-    {
-        name: '/getters.js',
-        content: ''
-    },
-    {
-        name: '/index.js',
-        content: `import Vue from 'vue'
-import Vuex from 'vuex'
-import * as actions from './actions'
-import * as getters from './getters'
-import state from './state'
-import mutations from './mutations'
-Vue.use(Vuex)
-export default new Vuex.Store({
-actions,
-getters,
-state,
-mutations,
-strict: true})`
-    },
-    {
-        name: '/mutation-types.js',
-        content: ''
-    },
-    {
-        name: '/mutation.js',
-        content: `import * as types from './mutation-types'\n
-const mutations = {}\n
-export default mutations`
-    },
-    {
-        name: '/state.js',
-        content: `const state = {}\n
-export default state`
-    }
-]
-        fs.mkdir(url, (err) => {
-            if (err) throw err;
-            for (let i = 0; i < VUEXJS.length; i++) {
-                fs.writeFile(path.join(__root__, '/src/store', VUEXJS[i].name), VUEXJS[i].content, err => {
-                    if (err) throw err;
-                })
+    __root__: process.cwd(),
+    // 复制文件夹到指定目录下
+    copyFile: function (src, dst) {
+        // 读取目录中的所有文件/目录
+        fs.readdir(src, function (err, paths) {
+            if (err) {
+                throw err;
             }
-        })
+            paths.forEach(function (path) {
+                var _src = src + '/' + path,
+                    _dst = dst + '/' + path,
+                    readable, writable;
+                stat(_src, function (err, st) {
+                    if (err) {
+                        throw err;
+                    }
+                    // 判断是否为文件
+                    if (st.isFile()) {
+                        readable = fs.createReadStream(_src);
+                        writable = fs.createWriteStream(_dst);
+                        readable.pipe(writable);
+                    }
+                    // 如果是目录则递归调用自身
+                    else if (st.isDirectory()) {
+                        exists(_src, _dst, copyFile);
+                    }
+                });
+            });
+        });
+    },
+    // 判断文件夹是否存在，不存在需要先创建目录
+    existsFile: function (src, dst, callback) {
+        fs.exists(dst, function (exists) {
+            if (exists) {
+                callback(src, dst);
+            } else {
+                fs.mkdir(dst, function () {
+                    callback(src, dst);
+                });
+            }
+        });
     }
 }
