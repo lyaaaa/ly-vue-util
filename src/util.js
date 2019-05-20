@@ -68,7 +68,7 @@ module.exports = {
             }
         }
         plugins = Object.assign({}, plugins, obj)
-        fs.writeFile(url, 'module.exports='+JSON.stringify(test), 'utf8', (err) => {
+        fs.writeFile(url, 'module.exports=' + JSON.stringify(test), 'utf8', (err) => {
             if (err) throw err;
             console.log('done');
         });
