@@ -67,7 +67,8 @@ module.exports = {
                 "postcss-zindex": false
             }
         }
-        plugins = Object.assign({}, plugins, obj)
+        test.plugins = Object.assign({}, plugins, obj);
+        console.log(test)
         fs.writeFile(url, 'module.exports=' + JSON.stringify(test), 'utf8', (err) => {
             if (err) throw err;
             console.log('done');
