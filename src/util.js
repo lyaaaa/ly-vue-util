@@ -1,9 +1,10 @@
 const path = require('path');
 const fs = require('fs');
 const stat = fs.stat;
+const __root__ = process.cwd(); // 代码执行时的目录
 
 module.exports = {
-    __root__: process.cwd(),   // 代码执行时的目录
+    __root__: __root__,
     // 复制文件夹到指定目录下
     copyFile: function (src, dst) {
         // 读取目录中的所有文件/目录
@@ -43,6 +44,33 @@ module.exports = {
                     callback(src, dst);
                 });
             }
+        });
+    },
+    // 配置 vw 单位
+    flexUtilVW: function (width, height) {
+        var url = path.join(__root__, '/.postcssrc.js');
+        var test = require(url);
+        var plugins = test.plugins;
+        var obj = {
+            "postcss-px-to-viewport": {
+                viewportWidth: width,
+                viewportHeight: height,
+                unitPrecision: 3,
+                viewportUnit: 'vw',
+                selectorBlackList: [],
+                minPixelValue: 1,
+                mediaQuery: false
+            },
+            "cssnano": {
+                preset: "advanced",
+                autoprefixer: false,
+                "postcss-zindex": false
+            }
+        }
+        plugins = Object.assign({}, plugins, obj)
+        fs.writeFile(url, 'module.exports='+JSON.stringify(test), 'utf8', (err) => {
+            if (err) throw err;
+            console.log('done');
         });
     }
 }
